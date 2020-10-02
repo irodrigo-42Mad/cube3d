@@ -1,0 +1,88 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: user42 <marvin@42.fr>                      +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2020/09/10 13:32:25 by user42            #+#    #+#              #
+#    Updated: 2020/09/10 16:45:07 by user42           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+##################### MACROS DEFINED TO COMPILE #############################
+  
+#$(1) Compiler to use
+#$(2) Object file to use
+#$(3) Source file to use
+#$(4) Aditional dependency files
+#$(5) Flags to use
+
+define COMPILATION
+$(2) : $(3) $(4)
+    $(1) -c -o $(2) $(3) $(5)
+endef
+
+
+#$(1) Source file to convert
+
+define C2O
+
+#	@echo "comprobar datos"
+#	@echo "ruta de los fuentes: " $(SRC)
+#	@echo "ruta de los objetos: " $(OBJ)
+#	@echo "lista recibida: " $(1)
+#	@echo "primera sustitucion: " $(patsubst $(SRC)%,$(OBJ)%,$(1))		#@echo "segunda sustitucion: " $(patsubst %.c,%.o,$(patsubst $(SRC)%,$(OBJ)%,$(1)))
+	$(patsubst %.c,%.o,$(patsubst $(SRC)%,$(OBJ)%,$(1)))
+
+endef
+
+
+##################### BASIC COMPILER CONFIGURATION ##########################
+
+NAME        := cub3d                    #depends of proyect, change it
+NAME_BONUS  := cub3d_bonus              #depends of proyect, change it
+
+######################## APPLICATION OPTIONS ################################
+CFLAGS      := -Wall -Werror -Wextra
+CCFLAGS     := $(CFLAGS)
+CC          := gcc
+CCMAS       := g++
+AR          := ar                       #ARchive and generate static libs
+ARFLAGS     := -crs                     #Flags necesary to generate lib arch
+RANDLIB     := randlib
+
+# directory organization and code ordering
+SRC         := src
+SRC_BONUS   := src_bonus
+OBJ         := obj
+OBJ_BONUS   := obj_bonus
+LIBDIR      := includes
+MKDIR       := mkdir -p
+RM          := rm -f
+
+# necesary files for compile operation
+ALLCS       := $(shell find $(SRC) -type f -iname "*.c")
+ 
+ 
+ 
+ 
+ list = foo bar baz
+ list_2 = $(foreach appfile,$(ALLCS),$(appfile)-$(appfile))
+ list_3 = $(foreach appfile,$(ALLCS),$(call C2O,$(appfile)))
+ 
+
+info:
+	@echo "lista de ficheros"
+	@echo $(list_2)
+	@echo " "
+	@echo " "
+	@echo "convierto a objetos"
+	echo $(ALLCS)
+	echo " macro de conversion"
+	echo $(list_3)
+	echo " "
+	echo "genero la compilacion"
+	echo $(call COMPILATION,$(CC), $(ALLCS), a.o, --prueba--,$(CFLAGS))
+
+
