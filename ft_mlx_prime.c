@@ -6,7 +6,7 @@
 /*   By: irodrigo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/10 21:07:22 by irodrigo          #+#    #+#             */
-/*   Updated: 2020/10/11 10:21:44 by irodrigo         ###   ########.fr       */
+/*   Updated: 2020/10/16 15:57:29 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int	ft_win_mlxexit(void *param)
 
 	game = (t_win *)param;
 	mlx_destroy_window(game->mlx_ptr, game->mlx_win);
+	printf("aqui estoy llegao");
 	return (0);
 }
 

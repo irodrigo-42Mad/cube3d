@@ -6,7 +6,7 @@
 /*   By: irodrigo <irodrigo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/10 17:17:02 by irodrigo          #+#    #+#             */
-/*   Updated: 2020/10/11 23:59:34 by irodrigo         ###   ########.fr       */
+/*   Updated: 2020/10/16 14:34:43 by irodrigo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,35 +58,70 @@
 # define L_EOF '\n'
 
 /*
-**Definicion de estructura x/y enteros
+**Data structs for game control
+**=============================
+**
+**window controler and resolution
 */
-typedef struct	s_ipoint{
-	int			x;
-	int			y;
-}				t_ipoint;
-
-/*
-**Definicion de estructura x/y de coma flotante.
-*/
-typedef struct	s_fpoint{
-	double		x;
-	double		y;
-}				t_fpoint;
-
-/*
-**Definition of game and drawing struct for raycast
-*/
-typedef struct	s_resolution{
-	int			w;
-	int			h;
-}				t_resol;
-
 typedef struct	s_win
 {
 	void		*mlx_ptr;
 	void		*mlx_win;
-	t_resol		my_res;
 }				t_win;
+
+typedef struct  s_resol{
+	int			w;
+	int			h;
+}				t_resol;
+
+/*
+**structs of setting control points
+**=================================
+**
+**struct s_ipoint controls integer x/y positions
+**struct s_fpoint controls double x/y positions
+*/
+typedef struct	s_ipoint{
+		int			x;
+		int			y;
+}					t_ipoint;
+
+typedef struct	s_fpoint{
+		double		x;
+		double		y;
+}					t_fpoint;
+
+/*
+**other image and game structs
+**============================
+**
+**configuration of image data
+*/
+
+typedef struct	s_img {
+	void		*img;
+	char		*addr;
+	int			bits_per_pixel;
+	int			line_length;
+	int			endian;
+}				t_img;
+
+/*
+**control map file data
+**=====================
+**
+**control file structure
+*/
+
+typedef struct	s_gm_sprite{
+	t_resol		texres;
+	t_fpoint	sprite;
+	t_fpoint	transform;
+	t_fpoint	displace;
+	t_fpoint	act_pos;
+	t_fpoint	ini_pos;
+	t_ipoint	texture;
+}				t_gm_sprite;
 
 typedef struct	s_texture{
 	char		*txt_path;
@@ -100,16 +135,9 @@ typedef struct	s_color{
 	int			blue;
 }				t_color;
 
-typedef struct	s_img {
-	void		*img;
-	char		*addr;
-	int			bits_per_pixel;
-	int			line_length;
-	int			endian;
-}				t_img;
-
 typedef struct	s_file_head{
-	t_win		my_window;
+	int			sp_pos;
+	t_resol		my_res;
 	t_texture	north;
 	t_texture	south;
 	t_texture	east;
@@ -125,6 +153,7 @@ typedef struct	s_map
 	t_file_head	info;
 	short		**map;
 }				t_map;
+
 
 static int		s_wordmap[MAPWIDTH][MAPHEIGHT] =
 {
@@ -157,8 +186,9 @@ static int		s_wordmap[MAPWIDTH][MAPHEIGHT] =
 static int		t_buffer[SCREENWIDTH][SCREENHEIGHT];
 
 typedef struct	s_game_draw{
-	int			h;
-	int			w;
+	int			res_h;
+	int			res_w;
+
 	int			loop_ok;
 	int			hit;
 	int			mside;
@@ -172,6 +202,9 @@ typedef struct	s_game_draw{
 
 	t_ipoint	map;
 	t_ipoint	step;
+
+	t_gm_sprite	my_sprites[];
+	// ojo, aqui faltan cosas.
 }				t_game_draw;
 
 int				exists(char *fname);
@@ -179,9 +212,13 @@ int				ft_check_args(int argc, char **argv);
 int				ft_check_open_ok(char *ruta);
 int				ft_ckeck_myfile(int	fd_game);
 
-/*
-** int		wr_error(char *tittle, char *message, t_win *p);
-*/
+t_game_draw		*ft_init_struct(t_game_draw *game, t_win *my_win);
+t_game_draw		*ft_set_init_val(t_game_draw *game);
+t_game_draw		*ft_set_init_draw (t_game_draw *game);
+t_win			*ft_set_game(t_win *my_game, t_game_draw *game);
+//t_game_draw		*ft_set_game(t_game_draw *game);
+t_game_draw		*ft_set_raycast(t_game_draw *game);
+
 int				wr_error(char *tittle, char *message, int err_n);
 
 int				ft_key_mlxpress(int keycode, void *param);
@@ -192,5 +229,4 @@ int				get_next_line(int fd, char **line);
 void			ft_memfree(char **str_line);
 
 char			*ft_right(const char *mystr, int len);
-
 #endif
